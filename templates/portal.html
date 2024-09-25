@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Portal</title>
+    <!-- Link to Bootstrap CSS for styling -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Customer Portal</h1>
+
+        <!-- Display Flash Messages: Temporary notifications to the user -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alert alert-dismissible fade show" role="alert">
+                    <!-- Loop through each flash message with its category -->
+                    {% for category, message in messages %}
+                        <!-- Display each message with the appropriate alert class -->
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Table to display the customer's orders -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <!-- Table headers for order details -->
+                    <th>Order #</th>
+                    <th>Shipping Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through each order in the orders list -->
+                {% for order in orders %}
+                {% if order.status != 'cancelled' %}
+                <tr>
+                    <!-- Link to view the order details -->
+                    <td><a href="{{ url_for('view_order', order_id=order.id) }}">{{ order.order_number }}</a></td>
+                    <!-- Display the current shipping status of the order -->
+                    <td>{{ order.status }}</td>
+                    <td>
+                        <!-- Button to view the order -->
+                        <a href="{{ url_for('view_order', order_id=order.id) }}" class="btn btn-primary">View Order</a>
+                        <!-- Form to cancel the order -->
+                        <form action="{{ url_for('cancel_order', order_id=order.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Cancel Order</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Navigation button to continue shopping -->
+        <nav class="mt-5">
+            <a href="{{ url_for('home') }}" class="btn btn-success">Continue Shopping</a>
+        </nav>
+    </div>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <!-- Link to Bootstrap CSS for styling -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Your Cart</h1>
+
+        {% if products %}
+            <!-- Button to remove all items from the cart -->
+            <a href="{{ url_for('clear_cart') }}" class="btn btn-danger mb-3">Remove All</a>
+            <!-- Table to display the items in the cart -->
+            <table class="table mt-4">
+                <thead>
+                    <tr>
+                        <!-- Table headers for product details -->
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Base Price</th>
+                        <th>Total Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loop through each product and its quantity in the cart -->
+                    {% for product, quantity in products %}
+                        <tr>
+                            <!-- Display the product name -->
+                            <td>{{ product.name }}</td>
+                            <td>
+                                <!-- Form to decrease the quantity of the product -->
+                                <form action="{{ url_for('decrease_quantity', product_id=product.id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-secondary btn-sm">-</button>
+                                </form>
+                                <!-- Display the current quantity of the product -->
+                                {{ quantity }}
+                                <!-- Form to increase the quantity of the product -->
+                                <form action="{{ url_for('increase_quantity', product_id=product.id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-secondary btn-sm">+</button>
+                                </form>
+                            </td>
+                            <!-- Display the base price of the product -->
+                            <td>${{ "%.2f"|format(product.price) }}</td>
+                            <!-- Display the total price for this line item (base price * quantity) -->
+                            <td>${{ "%.2f"|format(product.price * quantity) }}</td>
+                            <td>
+                                <!-- Form to remove the product from the cart -->
+                                <form action="{{ url_for('remove_from_cart', product_id=product.id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                        <tr>
+                        <!-- Row to display the total price of all items in the cart -->
+                        <td colspan="3"><strong>Total</strong></td>
+                        <td><strong>${{ "%.2f"|format(total_price) }}</strong></td>
+                        </tr>
+                </tbody>
+            </table>
+            <!-- Form to handle the purchase of items in the cart -->
+            <form action="{{ url_for('buy_now') }}" method="POST">
+                <button type="submit" class="btn btn-success">Buy Now</button>
+            </form>
+        {% else %}
+            <!-- Message displayed if the cart is empty -->
+            <p>Your cart is empty.</p>
+        {% endif %}
+        <!-- Navigation button to continue shopping -->
+        <nav class="mt-5">
+            <a href="{{ url_for('home') }}" class="btn btn-success">Continue Shopping</a>
+        </nav>
+    </div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Green Thumb Gardening</title>
+    <!-- Link to Bootstrap CSS for styling -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Link to custom stylesheet for additional styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Green Thumb Gardening</h1>
+
+        <!-- Flash Messages: Display temporary notifications to the user -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <!-- Display each flash message based on its category -->
+                        <div class="alert alert-{{ category }} mt-3">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Row for displaying products -->
+        <div class="row mt-4">
+            {% for product in products %}
+            <div class="col-md-4">  <!-- Create a column for each product -->
+                <div class="card mb-4">  <!-- Card layout for individual products -->
+                    <img src="{{ url_for('static', filename='images/' + product.image) }}" class="card-img-top product-image" alt="{{ product.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">${{ "%.2f"|format(product.price) }}</p>
+                        <!-- Button to add the product to the shopping cart -->
+                        <a href="{{ url_for('add_to_cart', product_id=product.id) }}" class="btn btn-primary">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Navigation buttons -->
+        <nav class="mt-5">
+            <a href="{{ url_for('cart') }}" class="btn btn-secondary">View Cart</a>
+            <a href="{{ url_for('portal') }}" class="btn btn-info">Customer Portal</a>
+        </nav>
+    </div>
+</body>
+</html>

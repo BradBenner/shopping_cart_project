@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Set the character encoding for the document -->
+    <meta charset="UTF-8">
+    <!-- Viewport settings for responsive design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Title of the webpage displayed in the browser tab -->
+    <title>Order Details</title>
+    <!-- Link to Bootstrap CSS for styling -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Main container for the order details -->
+    <div class="container">
+        <!-- Main heading for the order details page -->
+        <h1 class="mt-5">Order Details</h1>
+
+        <!-- Display the order number -->
+        <p>Order #: <strong>{{ order.order_number }}</strong></p>
+        <!-- Display the current shipping status of the order -->
+        <p>Shipping Status: <strong>{{ order.status }}</strong></p>
+
+        <!-- Subheading for the list of items purchased -->
+        <h2>Items Purchased</h2>
+        <!-- Table to display the purchased items -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <!-- Table headers for product details -->
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Base Price</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through each product and its quantity in the order -->
+                {% for product, quantity in products_with_quantity %}
+                <tr>
+                    <!-- Display the product name -->
+                    <td>{{ product.name }}</td>
+                    <!-- Display the quantity of the product -->
+                    <td>{{ quantity }}</td>
+                    <!-- Display the base price of the product formatted to two decimal places -->
+                    <td>${{ "%.2f"|format(product.price) }}</td>
+                    <!-- Display the total price for this product (base price * quantity) -->
+                    <td>${{ "%.2f"|format(product.price * quantity) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Display the total price for the entire order -->
+        <h3>Order Total: ${{ "%.2f"|format(total_price) }}</h3>
+
+        <!-- Conditional to display the cancel order button if the order is not cancelled -->
+        {% if order.status != 'cancelled' %}
+            <tr>
+            <td>
+            <!-- Form to handle order cancellation -->
+            <form action="{{ url_for('cancel_order', order_id=order.id) }}" method="POST">
+                <!-- Button to submit the cancellation form -->
+                <button type="submit" class="btn btn-danger">Cancel Order</button>
+            </form>
+            </td>
+            </tr>
+        {% endif %}
+
+        <!-- Buttons for navigation after viewing order details -->
+        <div class="mt-4">
+            <!-- Button to go back to the customer portal -->
+            <a href="{{ url_for('portal') }}" class="btn btn-info">Customer Portal</a>
+            <!-- Button to continue shopping -->
+            <a href="{{ url_for('home') }}" class="btn btn-success">Continue Shopping</a>
+        </div>
+    </div>
+</body>
+</html>

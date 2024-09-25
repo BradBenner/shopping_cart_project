@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <!-- Link to Bootstrap CSS for styling -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Order Confirmation</h1>
+
+        <!-- Thank you message for the customer -->
+        <p>Thank you for your order!</p>
+        <!-- Display the order number -->
+        <p>Your order number is: <strong>{{ order_number }}</strong></p>
+
+        <!-- Subheading for the list of purchased items -->
+        <h2>Items Purchased</h2>
+        <!-- Table to display the items in the order -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <!-- Table headers for product details -->
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Base Price</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through each item in the cart -->
+                {% for product_id, quantity in cart_items.items() %}
+                <!-- Retrieve product details using product ID -->
+                {% set product = Product.query.get(product_id) %}
+                <tr>
+                    <!-- Display the product name -->
+                    <td>{{ product.name }}</td>
+                    <!-- Display the quantity of the product purchased -->
+                    <td>{{ quantity }}</td>
+                    <!-- Display the base price of the product -->
+                    <td>${{ "%.2f"|format(product.price) }}</td>
+                    <!-- Calculate and display the total price for this line item -->
+                    <td>${{ "%.2f"|format(product.price * quantity) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Display the total price for the entire order -->
+        <h3>Order Total: ${{ "%.2f"|format(total_price) }}</h3>
+
+        <!-- Navigation buttons -->
+        <a href="{{ url_for('home') }}" class="btn btn-success">Continue Shopping</a>
+        <a href="{{ url_for('portal') }}" class="btn btn-info">View All Orders</a>
+    </div>
+</body>
+</html>
